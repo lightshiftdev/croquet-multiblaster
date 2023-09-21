@@ -2,6 +2,11 @@ export default class Display extends Croquet.View {
   iter = 1;
   colors = new Map();
   colorsByLabel = new Map();
+  actualSecond = 0;
+  fps = 0;
+  frameRateElm = undefined;
+  latencyElm = undefined;
+  prevLatency = 0;
 
   constructor(model) {
     super(model);
@@ -9,6 +14,8 @@ export default class Display extends Croquet.View {
 
     const joystick = document.getElementById("joystick");
     const knob = document.getElementById("knob");
+    this.frameRateElm = document.getElementById("frameRate");
+    this.latencyElm = document.getElementById("latency");
 
     document.onkeydown = (e) => {
       joystick.style.display = "none";
@@ -187,10 +194,21 @@ export default class Display extends Croquet.View {
       `hsl(${color}, ${25 + this.iter * 2}%, ${60 + this.iter}%)`
     );
   }
-
   // update is called once per render frame
   // read from shared model, interpolate, render
   update() {
+    const aux = Math.floor(Date.now() / 1000);
+    if (aux === this.actualSecond) {
+      this.fps += 1;
+    } else {
+      this.frameRateElm.textContent = this.fps;
+      this.fps = 1;
+      this.actualSecond = aux;
+    }
+    if (this.prevLatency !== this.session.latency) {
+      this.latencyElm.textContent = this.session.latency;
+      this.prevLatency = this.session.latency;
+    }
     this.context.clearRect(0, 0, 1000, 1000);
     this.context.fillStyle = "rgba(255, 255, 255, 0.5)";
     this.context.lineWidth = 3;
