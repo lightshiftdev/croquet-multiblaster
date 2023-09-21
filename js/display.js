@@ -6,7 +6,9 @@ export default class Display extends Croquet.View {
   fps = 0;
   frameRateElm = undefined;
   latencyElm = undefined;
+  metricsElms = undefined;
   prevLatency = 0;
+  showMetrics = false;
 
   constructor(model) {
     super(model);
@@ -16,6 +18,7 @@ export default class Display extends Croquet.View {
     const knob = document.getElementById("knob");
     this.frameRateElm = document.getElementById("frameRate");
     this.latencyElm = document.getElementById("latency");
+    this.metricsElms = Array.from(document.getElementsByClassName("metrics"));
 
     document.onkeydown = (e) => {
       joystick.style.display = "none";
@@ -40,6 +43,13 @@ export default class Display extends Croquet.View {
         case "S":
         case " ":
           this.publish(this.viewId, "fire-blaster");
+          break;
+        case "m":
+        case "M":
+          this.showMetrics = !this.showMetrics;
+          this.metricsElms.forEach(
+            (el) => (el.style.display = this.showMetrics ? "block" : "none")
+          );
           break;
       }
     };
@@ -197,17 +207,19 @@ export default class Display extends Croquet.View {
   // update is called once per render frame
   // read from shared model, interpolate, render
   update() {
-    const aux = Math.floor(Date.now() / 1000);
-    if (aux === this.actualSecond) {
-      this.fps += 1;
-    } else {
-      this.frameRateElm.textContent = this.fps;
-      this.fps = 1;
-      this.actualSecond = aux;
-    }
-    if (this.prevLatency !== this.session.latency) {
-      this.latencyElm.textContent = this.session.latency;
-      this.prevLatency = this.session.latency;
+    if (this.showMetrics) {
+      const aux = Math.floor(Date.now() / 1000);
+      if (aux === this.actualSecond) {
+        this.fps += 1;
+      } else {
+        this.frameRateElm.textContent = this.fps;
+        this.fps = 1;
+        this.actualSecond = aux;
+      }
+      if (this.prevLatency !== this.session.latency) {
+        this.latencyElm.textContent = this.session.latency;
+        this.prevLatency = this.session.latency;
+      }
     }
     this.context.clearRect(0, 0, 1000, 1000);
     this.context.fillStyle = "rgba(255, 255, 255, 0.5)";
