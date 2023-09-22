@@ -4,7 +4,7 @@ body {
   height: 100%;
   overflow: hidden;
   touch-action: none;
-  background: #999;
+  background: #505050;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   user-select: none;
@@ -48,4 +48,12 @@ body {
   color: #000;
   text-align: center;
   font-size: 1.2em;
+}
+
+.metrics-container {
+  position: fixed;
+  bottom: 60px;
+  right: 10px;
+  color: #55cc26;
+  text-shadow: 1px 1px 1px #383838;
 }
