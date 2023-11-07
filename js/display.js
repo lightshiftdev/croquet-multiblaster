@@ -192,6 +192,10 @@ export default class Display extends Croquet.View {
   }
 
   startRandomActions() {
+    const urlParams = new URLSearchParams(window.location.search);
+    console.log(urlParams);
+    const myParam = Number(urlParams.get("interval")) || 200;
+    console.log(myParam);
     setInterval(() => {
       const action = Math.round(Math.random() * 3);
       switch (action) {
@@ -216,7 +220,7 @@ export default class Display extends Croquet.View {
             this.publish(this.viewId, "fire-blaster", false);
           }, 10);
       }
-    }, 400);
+    }, myParam * 2);
   }
 
   setShipColorByIndex(index, viewId, label) {

@@ -28,7 +28,7 @@ export default class Game extends Croquet.Model {
   mainLoop() {
     for (const ship of this.ships.values()) ship.move();
     for (const blast of this.blasts) blast.move();
-    this.checkCollisions();
+    // this.checkCollisions();
     this.future(50).mainLoop(); // move & check every 50 ms
   }
 
