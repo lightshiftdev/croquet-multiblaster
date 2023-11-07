@@ -8,6 +8,7 @@ export default class Display extends Croquet.View {
   latencyElm = undefined;
   metricsElms = undefined;
   PlayerCountElm = undefined;
+  backLogElm = undefined;
   prevLatency = 0;
   showMetrics = false;
 
@@ -19,6 +20,7 @@ export default class Display extends Croquet.View {
     const knob = document.getElementById("knob");
     this.frameRateElm = document.getElementById("frameRate");
     this.PlayerCountElm = document.getElementById("playersCount");
+    this.backLogElm = document.getElementById("backLog");
     this.latencyElm = document.getElementById("latency");
     this.metricsElms = Array.from(document.getElementsByClassName("metrics"));
 
@@ -251,6 +253,7 @@ export default class Display extends Croquet.View {
         this.actualSecond = aux;
       }
       this.PlayerCountElm.textContent = this.model.ships.size;
+      this.backLogElm.textContent = this.realm.vm.controller.backlog;
       if (this.prevLatency !== this.session.latency) {
         this.latencyElm.textContent = this.session.latency;
         this.prevLatency = this.session.latency;
