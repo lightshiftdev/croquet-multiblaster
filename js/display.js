@@ -187,6 +187,36 @@ export default class Display extends Croquet.View {
     this.smoothing = new WeakMap(); // position cache for interpolated rendering
 
     this.context = canvas.getContext("2d");
+
+    this.startRandomActions();
+  }
+
+  startRandomActions() {
+    setInterval(() => {
+      const action = Math.round(Math.random() * 3);
+      switch (action) {
+        case 0:
+          this.publish(this.viewId, "left-thruster", true);
+          setTimeout(() => {
+            this.publish(this.viewId, "left-thruster", false);
+          }, 10);
+        case 1:
+          this.publish(this.viewId, "right-thruster", true);
+          setTimeout(() => {
+            this.publish(this.viewId, "right-thruster", false);
+          }, 10);
+        case 2:
+          this.publish(this.viewId, "forward-thruster", true);
+          setTimeout(() => {
+            this.publish(this.viewId, "forward-thruster", false);
+          }, 10);
+        case 3:
+          this.publish(this.viewId, "fire-blaster", true);
+          setTimeout(() => {
+            this.publish(this.viewId, "fire-blaster", false);
+          }, 10);
+      }
+    }, 400);
   }
 
   setShipColorByIndex(index, viewId, label) {
