@@ -280,15 +280,19 @@ export default class Display extends Croquet.View {
       const backlog = metricsArray.map((f) => f.backlog);
 
       this.PlayerCountElm.textContent = this.model.ships.size;
-      this.frameRateElm.textContent = `avg: ${
+      this.frameRateElm.textContent = `avg: ${(
         fps.reduce((a, b) => a + b) / fps.length
-      }, Max: ${Math.max(...fps)}, Min: ${Math.min(...fps)}`;
-      this.latencyElm.textContent = `avg: ${
+      ).toFixed(0)}, Max: ${Math.max(...fps)}, Min: ${Math.min(...fps)}`;
+      this.latencyElm.textContent = `avg: ${(
         latency.reduce((a, b) => a + b) / latency.length
-      }, Max: ${Math.max(...latency)}, Min: ${Math.min(...latency)}`;
-      this.backLogElm.textContent = `avg: ${
+      ).toFixed(0)}, Max: ${Math.max(...latency)}, Min: ${Math.min(
+        ...latency
+      )}`;
+      this.backLogElm.textContent = `avg: ${(
         backlog.reduce((a, b) => a + b) / backlog.length
-      }, Max: ${Math.max(...backlog)}, Min: ${Math.min(...backlog)}`;
+      ).toFixed(0)}, Max: ${Math.max(...backlog)}, Min: ${Math.min(
+        ...backlog
+      )}`;
       /* this.latencyElm.textContent = this.session.latency;
       this.backLogElm.textContent = this.realm.vm.controller.backlog;
       this.PlayerCountElm.textContent = this.model.ships.size; */
