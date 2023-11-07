@@ -11,6 +11,12 @@ export default class Display extends Croquet.View {
   backLogElm = undefined;
   prevLatency = 0;
   showMetrics = false;
+  metrics = {
+    fps: 0,
+    players: 0,
+    latency: 0,
+    backlog: 0,
+  };
 
   constructor(model) {
     super(model);
@@ -199,6 +205,9 @@ export default class Display extends Croquet.View {
     const urlParams = new URLSearchParams(window.location.search);
     const myParam = Number(urlParams.get("interval")) || 200;
     setInterval(() => {
+      this.publish(this.viewId, "send-metrics", this.metrics);
+    }, myParam);
+    /* setInterval(() => {
       const action = Math.round(Math.random() * 3);
       switch (action) {
         case 0:
@@ -222,7 +231,7 @@ export default class Display extends Croquet.View {
             this.publish(this.viewId, "fire-blaster", false);
           }, 10);
       }
-    }, myParam * 2);
+    }, myParam * 2); */
   }
 
   setShipColorByIndex(index, viewId, label) {
@@ -243,22 +252,48 @@ export default class Display extends Croquet.View {
   // update is called once per render frame
   // read from shared model, interpolate, render
   update() {
-    if (this.showMetrics) {
-      const aux = Math.floor(Date.now() / 1000);
-      if (aux === this.actualSecond) {
-        this.fps += 1;
-      } else {
-        this.frameRateElm.textContent = this.fps;
-        this.fps = 1;
-        this.actualSecond = aux;
-      }
-      this.PlayerCountElm.textContent = this.model.ships.size;
-      this.backLogElm.textContent = this.realm.vm.controller.backlog;
-      if (this.prevLatency !== this.session.latency) {
-        this.latencyElm.textContent = this.session.latency;
-        this.prevLatency = this.session.latency;
-      }
+    const aux = Math.floor(Date.now() / 1000);
+    if (aux === this.actualSecond) {
+      this.fps += 1;
+    } else {
+      this.actualFps = this.fps;
+      this.fps = 1;
+      this.actualSecond = aux;
     }
+    if (this.prevLatency !== this.session.latency) {
+      this.prevLatency = this.session.latency;
+    }
+
+    this.metrics = {
+      fps: this.actualFps || 0,
+      players: this.model.ships.size,
+      latency: this.session.latency,
+      backlog: this.realm.vm.controller.backlog,
+    };
+
+    if (this.showMetrics) {
+      const metricsArray = Array.from(this.model.ships.values()).map(
+        (s) => s.metrics
+      );
+      const fps = metricsArray.map((f) => f.fps);
+      const latency = metricsArray.map((f) => f.latency);
+      const backlog = metricsArray.map((f) => f.backlog);
+
+      this.PlayerCountElm.textContent = this.model.ships.size;
+      this.frameRateElm.textContent = `avg: ${
+        fps.reduce((a, b) => a + b) / fps.length
+      }, Max: ${Math.max(...fps)}, Min: ${Math.min(...fps)}`;
+      this.latencyElm.textContent = `avg: ${
+        latency.reduce((a, b) => a + b) / latency.length
+      }, Max: ${Math.max(...latency)}, Min: ${Math.min(...latency)}`;
+      this.backLogElm.textContent = `avg: ${
+        backlog.reduce((a, b) => a + b) / backlog.length
+      }, Max: ${Math.max(...backlog)}, Min: ${Math.min(...backlog)}`;
+      /* this.latencyElm.textContent = this.session.latency;
+      this.backLogElm.textContent = this.realm.vm.controller.backlog;
+      this.PlayerCountElm.textContent = this.model.ships.size; */
+    }
+
     this.context.clearRect(0, 0, 1000, 1000);
     this.context.fillStyle = "rgba(255, 255, 255, 0.5)";
     this.context.lineWidth = 3;

@@ -87,11 +87,18 @@ class Ship extends SpaceObject {
     this.dx = 0;
     this.dy = 0;
     this.score = 0;
+    this.metrics = {
+      fps: 0,
+      players: 0,
+      latency: 0,
+      backlog: 0,
+    };
     this.subscribe(viewId, "left-thruster", this.leftThruster);
     this.subscribe(viewId, "right-thruster", this.rightThruster);
     this.subscribe(viewId, "forward-thruster", this.forwardThruster);
     this.subscribe(viewId, "fire-blaster", this.fireBlaster);
     this.subscribe(viewId, "set-initials", this.setInitials);
+    this.subscribe(viewId, "send-metrics", this.setPlayerMetrics);
     this.reset();
   }
 
@@ -107,6 +114,10 @@ class Ship extends SpaceObject {
     this.wasHit = 0;
     this.spawnTime = this.now();
     this.newSpawn = true;
+  }
+
+  setPlayerMetrics(metrics) {
+    this.metrics = metrics;
   }
 
   leftThruster(active) {
