@@ -7,6 +7,7 @@ export default class Display extends Croquet.View {
   frameRateElm = undefined;
   latencyElm = undefined;
   metricsElms = undefined;
+  PlayerCountElm = undefined;
   prevLatency = 0;
   showMetrics = false;
 
@@ -17,6 +18,7 @@ export default class Display extends Croquet.View {
     const joystick = document.getElementById("joystick");
     const knob = document.getElementById("knob");
     this.frameRateElm = document.getElementById("frameRate");
+    this.PlayerCountElm = document.getElementById("playersCount");
     this.latencyElm = document.getElementById("latency");
     this.metricsElms = Array.from(document.getElementsByClassName("metrics"));
 
@@ -193,9 +195,7 @@ export default class Display extends Croquet.View {
 
   startRandomActions() {
     const urlParams = new URLSearchParams(window.location.search);
-    console.log(urlParams);
     const myParam = Number(urlParams.get("interval")) || 200;
-    console.log(myParam);
     setInterval(() => {
       const action = Math.round(Math.random() * 3);
       switch (action) {
@@ -250,6 +250,7 @@ export default class Display extends Croquet.View {
         this.fps = 1;
         this.actualSecond = aux;
       }
+      this.PlayerCountElm.textContent = this.model.ships.size;
       if (this.prevLatency !== this.session.latency) {
         this.latencyElm.textContent = this.session.latency;
         this.prevLatency = this.session.latency;
@@ -282,11 +283,11 @@ export default class Display extends Croquet.View {
     for (let [i, [label, score]] of highscore
       .sort((a, b) => b[1] - a[1])
       .entries()) {
-      const color = this.colorsByLabel.get(label);
+      /* const color = this.colorsByLabel.get(label);
       if (color) {
         this.context.fillStyle = color;
-      }
-      this.context.fillText(`${i + 1}. ${label}: ${score}`, 10, 30 + i * 35);
+      } */
+      // this.context.fillText(`${i + 1}. ${label}: ${score}`, 10, 30 + i * 35);
     }
     // draw ships, and blasters
     this.context.font = "40px sans-serif";
