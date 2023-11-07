@@ -204,8 +204,9 @@ export default class Display extends Croquet.View {
   startRandomActions() {
     const urlParams = new URLSearchParams(window.location.search);
     const myParam = Number(urlParams.get("interval")) || 200;
+    const minClients = Number(urlParams.get("min-clients")) || 20;
     setInterval(() => {
-      if (this.model.viewCount === 100) {
+      if (this.model.viewCount === minClients) {
         this.publish(this.viewId, "send-metrics", this.metrics);
       }
     }, myParam);
